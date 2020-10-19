@@ -1,0 +1,5 @@
+name: DelayedSudo
+description: A simple plugin that allowes for sudo commands with a delay.]
+author: VisenGames
+version: 1.0
+main: games.visen.delayedsudo.Main
