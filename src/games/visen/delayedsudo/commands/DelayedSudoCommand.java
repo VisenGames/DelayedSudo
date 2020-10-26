@@ -1,6 +1,5 @@
 package games.visen.delayedsudo.commands;
 
-import com.avaje.ebean.validation.NotNull;
 import games.visen.delayedsudo.Main;
 import games.visen.delayedsudo.utils.Utils;
 import org.bukkit.Bukkit;
@@ -8,6 +7,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Arrays;
+import java.util.LinkedList;
 
 public class DelayedSudoCommand implements CommandExecutor {
 
@@ -21,7 +23,7 @@ public class DelayedSudoCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if(args.length < 4) {
+        if(args.length < 3) {
             return false;
         }
 
@@ -39,23 +41,61 @@ public class DelayedSudoCommand implements CommandExecutor {
         int time;
         if(timeString.contains("s")) {
             timeString = timeString.substring(0, timeString.length() - 1);
-            time = Integer.parseInt(timeString);
+            try {
+                time = Integer.parseInt(timeString);
+            } catch(NumberFormatException e) {
+                return false;
+            }
         } else if (timeString.contains("m")) {
             timeString = timeString.substring(0, timeString.length() - 1);
-            time = Integer.parseInt(timeString) * 60;
+            try {
+                time = Integer.parseInt(timeString) * 60;
+            } catch(NumberFormatException e) {
+                return false;
+            }
         } else {
-            time = Integer.parseInt(timeString);
+            try {
+                time = Integer.parseInt(timeString);
+            } catch(NumberFormatException e) {
+                return false;
+            }
         }
         String command = "";
+        boolean asOp = false;
         for(String s : args) {
             if(!s.contains(args[0]) && !s.contains(args[1])) {
                 if(!s.contains("-op")) {
                     command = command + s + " ";
+                } else {
+                    asOp = true;
                 }
             }
         }
 
-        if(args[args.length])
+        LinkedList<String> argList = new LinkedList<String>(Arrays.asList(args));
+
+        if(argList.contains("-op") || asOp) {
+            if(!futureSender.isOp()) {
+                String finalCommand = command;
+                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                            futureSender.setOp(true);
+                            Bukkit.dispatchCommand(futureSender, finalCommand);
+                            futureSender.setOp(false);
+                        }, 20 * time);
+            } else {
+                String finalCommand1 = command;
+                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                    Bukkit.dispatchCommand(futureSender, finalCommand1);
+                }, 20 * time);
+            }
+        } else {
+            String finalCommand2 = command;
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                Bukkit.dispatchCommand(futureSender, finalCommand2);
+            }, 20 * time);
+        }
+
+        Utils.message(sender, "&cRunning command in "  + time + " seconds.");
         return true;
     }
 }

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="DelayedSudo:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/DelayedSudo_jar</output-path>
+    <root id="archive" name="DelayedSudo.jar">
+      <element id="module-output" name="DelayedSudo" />
+    </root>
+  </artifact>
+</component>

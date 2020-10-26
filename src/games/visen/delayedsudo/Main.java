@@ -1,5 +1,6 @@
 package games.visen.delayedsudo;
 
+import games.visen.delayedsudo.commands.DelayedSudoCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -14,6 +15,7 @@ public class Main extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        new DelayedSudoCommand(this);
     }
 
     public Main getInstance() {
